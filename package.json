@@ -1,0 +1,23 @@
+{
+  "name": "server-starter-kit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alexander3006/ServerStarterKit.git"
+  },
+  "keywords": [
+    "Clean",
+    "Architecture"
+  ],
+  "author": "Alexander Rozghon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Alexander3006/ServerStarterKit/issues"
+  },
+  "homepage": "https://github.com/Alexander3006/ServerStarterKit#readme"
+}
