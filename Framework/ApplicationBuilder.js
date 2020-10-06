@@ -16,13 +16,12 @@ const nodeApi = {
 
 const services = {
   Logger: './Services/LoggerService.js',
-
 };
 
 class ApplicationBuilder {
   constructor() {
     this.services = {};
-    this.dependencies = { npm, nodeApi };
+    this.dependencies = {npm, nodeApi};
     this.container = new DIContainer();
     this.startup;
   }
@@ -39,13 +38,13 @@ class ApplicationBuilder {
   }
 
   async build() {
-    const { services } = this;
+    const {services} = this;
     const sandbox = vm.createContext(services);
     const src = await fsp.readFile(startupFileName);
     const script = vm.createScript(src);
     const Startup = script.runInNewContext(sandbox);
     this.startup = new Startup();
-    const { startup, container } = this;
+    const {startup, container} = this;
     startup.configureServices(container);
     const application = container.build();
     startup.configure(application);
