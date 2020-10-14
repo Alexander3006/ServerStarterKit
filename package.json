@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/Alexander3006/ServerStarterKit#readme",
   "dependencies": {
+    "http": "0.0.1-security",
+    "https": "^1.0.0",
     "parse-function": "^5.6.10",
     "vm": "^0.1.0"
   },
@@ -28,6 +30,6 @@
     "eslint": "^7.10.0",
     "eslint-config-metarhia": "^7.0.1",
     "eslint-plugin-import": "^2.22.1",
-    "prettier": "2.1.2"
+    "prettier": "^2.1.2"
   }
 }
