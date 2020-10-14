@@ -4,18 +4,19 @@ const parseFunction = require('parse-function')();
 
 class DIContainer {
   constructor() {
-    this.container = new Proxy({}, {
-      get: (target, name) => {
-        if (name in target) {
-          const Service = target[name];
-          return this._isFunction(Service)
-            ? new Service()
-            : Service;
-        } else {
-          throw new Error(`The ${name} service does not exist`);
-        }
-      }
-    });
+    this.container = new Proxy(
+      {},
+      {
+        get: (target, name) => {
+          if (name in target) {
+            const service = target[name];
+            return this._isFunction(service) ? service() : service;
+          } else {
+            throw new Error(`The ${name} service does not exist`);
+          }
+        },
+      },
+    );
   }
 
   _isFunction(obj) {
@@ -26,7 +27,7 @@ class DIContainer {
     if (this._isFunction(serviceFactory)) {
       const serviceFactoryArgsName = parseFunction.parse(serviceFactory).args;
       const args = [];
-      serviceFactoryArgsName.map(argName => {
+      serviceFactoryArgsName.map((argName) => {
         args.push(this.container[argName]);
       });
       return serviceFactory.bind(null, ...args);
@@ -36,8 +37,8 @@ class DIContainer {
   }
 
   addSingelton(serviceName, serviceFactory) {
-    const Service = this._inject(serviceFactory);
-    const singeltonService = new Service();
+    const service = this._inject(serviceFactory);
+    const singeltonService = service();
     this.container[serviceName] = singeltonService;
     return this;
   }
