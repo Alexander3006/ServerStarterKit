@@ -27,7 +27,9 @@
     transport.setHandler(async (connection) => {
       await router.indicatePath(connection);
     });
-
+    nodeApi.setTimeout(() => {
+      transport.stopListen();
+    }, 1000)
     transport.startListen();
   }
 });

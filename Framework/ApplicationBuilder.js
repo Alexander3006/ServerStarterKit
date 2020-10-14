@@ -13,6 +13,7 @@ const npm = {
 const nodeApi = {
   console,
   Promise,
+  setTimeout,
 };
 
 const services = {
