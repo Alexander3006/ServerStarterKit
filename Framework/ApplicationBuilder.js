@@ -4,30 +4,14 @@ const DIContainer = require('./DIContainer');
 const vm = require('vm');
 const fsp = require('fs').promises;
 
-const startupFileName = './Startup.js';
-
-const npm = {
-  fs: require('fs'),
-  url: require('url'),
-};
-const nodeApi = {
-  console,
-  Promise,
-  setTimeout,
-};
-
-const services = {
-  Logger: './Services/LoggerService.js',
-  Router: './Framework/Services/RouteService.js',
-};
-
 class ApplicationBuilder {
   constructor() {
     this.services = {};
-    this.dependencies = {npm, nodeApi};
+    this.dependencies;
     this.container = new DIContainer();
     this.startup;
     this.configuration = {};
+    this.servicesPaths;
   }
 
   setConfigurations(configuration) {
@@ -35,10 +19,18 @@ class ApplicationBuilder {
     return this;
   }
 
+  setDependencies(dependencies) {
+    const {npm, nodeApi, services} = dependencies;
+    this.dependencies = {npm, nodeApi};
+    this.servicesPaths = services;
+    return this;
+  }
+
   async buildServices() {
+    const {servicesPaths} = this;
     await Promise.all(
-      Object.keys(services).map(async (serviceName) => {
-        const servicePath = services[serviceName];
+      Object.keys(servicesPaths).map(async (serviceName) => {
+        const servicePath = servicesPaths[serviceName];
         const src = await fsp.readFile(servicePath);
         const sandbox = vm.createContext(this.dependencies);
         const script = vm.createScript(src);
@@ -49,17 +41,17 @@ class ApplicationBuilder {
   }
 
   async build() {
-    const {services, dependencies} = this;
-    const context = {...services, ...dependencies};
+    const {services, dependencies, configuration} = this;
+    const context = {...services, ...dependencies, configuration};
     const sandbox = vm.createContext(context);
-    const src = await fsp.readFile(startupFileName);
+    const src = await fsp.readFile(configuration.startup);
     const script = vm.createScript(src);
     const Startup = script.runInNewContext(sandbox);
     this.startup = new Startup();
     const {startup, container} = this;
     startup.configureServices(container);
     const application = container.build();
-    startup.configure(application);
+    await startup.configure(application);
   }
 
   useTransport(ITransport, IConnection) {
