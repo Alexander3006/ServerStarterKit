@@ -6,6 +6,12 @@ const configuration = {
     port: 3000,
     ssl: false,
   },
+  controllers: {
+    paths: ['./Controllers'],
+    supervisor: true,
+  }, 
+  startup: './Startup.js',
+  dependencies: './dependencies.js',
 };
 
 module.exports = configuration;
