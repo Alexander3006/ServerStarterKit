@@ -2,12 +2,14 @@
   configureServices(services) {
     services.addSingelton('logger', Logger);
     services.addSingelton('router', Router);
-    // nodeApi.console.dir(Router);
+    services.addSingelton('controllers', Controllers);
   }
 
-  configure({logger, transport, router}) {
+  async configure({logger, transport, router, controllers}) {
     logger.print('Hello from Startup');
 
+    await controllers.start(configuration);
+  
     router
       .registerEndpoint({
         method: 'GET',
