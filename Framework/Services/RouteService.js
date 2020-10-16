@@ -1,21 +1,22 @@
 class RouteService {
-  constructor(logger) {
-    this.logger = logger;
-    this.map = {};
+  constructor(services) {
+    this.services = services;
+    this.storage = {};
   }
 
   async indicatePath(connection) {
+    const {services, storage} = this;
     const {url: urlParser} = npm;
     const {
       request: {url, method},
     } = connection;
     const {pathname} = urlParser.parse(url);
-    const methodStorage = this.map[method.toLowerCase()];
+    const methodStorage = storage[method.toLowerCase()];
     if (methodStorage) {
       const endpoint = methodStorage.get(pathname);
       if (endpoint) {
         const {handler} = endpoint;
-        await handler(connection);
+        await handler(connection, services);
       } else {
         connection.sendJson('Not Found');
       }
@@ -26,20 +27,42 @@ class RouteService {
 
   registerEndpoint(options) {
     const {method, url, handler} = options;
-    const {map} = this;
+    const {storage} = this;
     const normilizedMetod = method.toLowerCase();
-    const methodStorage = this.map[normilizedMetod];
+    const methodStorage = storage[normilizedMetod];
     if (methodStorage) {
       methodStorage.set(url, {handler});
     } else {
-      const methodStorage = (map[normilizedMetod] = new Map());
+      const methodStorage = (storage[normilizedMetod] = new Map());
       methodStorage.set(url, {handler});
     }
     return this;
   }
+
+  _findHandlerInStorage(storage, value) {
+    for (let [url, obj] of storage) {
+      const {handler} = obj;
+      if(handler.toString() === value.toString()) {
+        return url;
+      }
+    }  
+    return false;
+  }
+
+  deleteController(handler) {
+    const {storage, _findHandlerInStorage} = this;
+    Object.values(storage)
+    .map(methodStorage => {
+      const url = _findHandlerInStorage(methodStorage, handler);
+      if(url) {
+        methodStorage.delete(url);
+      }
+    })
+  }
+
 }
 
-RouteServiceProvider = (logger) => {
-  const router = new RouteService(logger);
+RouteServiceProvider = (services) => {
+  const router = new RouteService(services);
   return router;
 };
