@@ -85,6 +85,14 @@ class ControllerService {
     return this;
   }
 
+  stopSupervisor() {
+    const {watchers} = this;
+    for(const [_, watcher] of watchers){
+      watcher.close();
+    } 
+    watchers.clear();
+  }
+
   _watch(dirPath) {
     const {fs} = npm;
     const {setTimeout} = nodeApi;

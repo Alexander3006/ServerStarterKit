@@ -31,6 +31,7 @@
     });
     nodeApi.setTimeout(() => {
       transport.stopListen();
+      controllers.stopSupervisor();
     }, 1000);
     transport.startListen();
   }
