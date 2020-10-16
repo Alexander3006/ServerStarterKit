@@ -9,7 +9,7 @@
     logger.print('Hello from Startup');
 
     await controllers.start(configuration);
-  
+
     router
       .registerEndpoint({
         method: 'GET',
@@ -31,7 +31,7 @@
     });
     nodeApi.setTimeout(() => {
       transport.stopListen();
-    }, 1000)
+    }, 1000);
     transport.startListen();
   }
 });

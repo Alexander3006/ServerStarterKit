@@ -40,26 +40,24 @@ class RouteService {
   }
 
   _findHandlerInStorage(storage, value) {
-    for (let [url, obj] of storage) {
+    for (const [url, obj] of storage) {
       const {handler} = obj;
-      if(handler.toString() === value.toString()) {
+      if (handler.toString() === value.toString()) {
         return url;
       }
-    }  
+    }
     return false;
   }
 
   deleteController(handler) {
     const {storage, _findHandlerInStorage} = this;
-    Object.values(storage)
-    .map(methodStorage => {
+    Object.values(storage).map((methodStorage) => {
       const url = _findHandlerInStorage(methodStorage, handler);
-      if(url) {
+      if (url) {
         methodStorage.delete(url);
       }
-    })
+    });
   }
-
 }
 
 RouteServiceProvider = (services) => {

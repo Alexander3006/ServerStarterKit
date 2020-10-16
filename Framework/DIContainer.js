@@ -8,7 +8,7 @@ class DIContainer {
       {},
       {
         get: (target, name) => {
-          if(name === 'services') return target;
+          if (name === 'services') return target;
           if (name in target) {
             const service = target[name];
             return this._isFunction(service) ? service() : service;
@@ -17,10 +17,10 @@ class DIContainer {
           }
         },
         set: (target, prop, value) => {
-          if(prop === 'services') return false;
+          if (prop === 'services') return false;
           target[prop] = value;
           return true;
-        }
+        },
       },
     );
   }

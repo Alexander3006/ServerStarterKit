@@ -9,7 +9,7 @@ const configuration = {
   controllers: {
     paths: ['./Controllers'],
     supervisor: true,
-  }, 
+  },
   startup: './Startup.js',
   dependencies: './dependencies.js',
 };
