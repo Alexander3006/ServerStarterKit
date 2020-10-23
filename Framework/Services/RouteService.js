@@ -18,10 +18,10 @@ class RouteService {
         const {handler} = endpoint;
         await handler(connection, services);
       } else {
-        connection.sendJson('Not Found');
+        connection.error(404, 'Not Found');
       }
     } else {
-      connection.sendJson('Not Found');
+      connection.error(404, 'Not Found');
     }
   }
 
