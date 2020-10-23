@@ -1,7 +1,8 @@
 const testController = async (connection, services) => {
   const {logger} = services;
   logger.print('Test controller');
-  connection.sendJson('Hello from testController');
+  logger.print(connection.session);
+  connection.sendJson(connection.session);
 };
 
 ({
