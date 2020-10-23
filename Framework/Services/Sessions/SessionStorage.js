@@ -31,6 +31,12 @@ class SessionStorage {
       });
     });
   }
+
+  stop() {
+    const {storage} = this;
+    storage.quit();
+    return;
+  }
 }
 
 SessionStorageProvider = (memoryCache) => {

@@ -10,7 +10,7 @@
     services.addSingelton('transport', HttpTransport);
   }
 
-  async configure({ logger, transport, router, controllers, sessions }) {
+  async configure({ logger, transport, router, controllers, sessions}) {
     logger.print('Hello from Startup');
 
     await controllers.start(configuration);
@@ -44,6 +44,7 @@
     nodeApi.setTimeout(() => {
       transport.stopListen();
       controllers.stopSupervisor();
+      sessions.stop();
     }, 1000);
     transport.startListen();
   }

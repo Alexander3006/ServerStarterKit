@@ -51,6 +51,12 @@ class Sessions {
       path,
     });
   }
+
+  stop() {
+    const {sessionStorage} = this;
+    sessionStorage.stop();
+    return
+  }
 }
 
 SessionsProvider = (sessionStorage) => {
