@@ -21,7 +21,7 @@ const nodeApi = {
 };
 
 const services = {
-  Logger: './Services/LoggerService.js',
+  Logger: './Framework/Services/LoggerService.js',
   Router: './Framework/Services/RouteService.js',
   Controllers: './Framework/Services/Controllers/ControllerService.js',
   Sessions: './Framework/Services/Sessions/SessionService.js',
