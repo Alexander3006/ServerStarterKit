@@ -10,6 +10,15 @@ const configuration = {
     paths: ['./Controllers'],
     supervisor: true,
   },
+  sessions: {
+    maxAge: 30000,
+    httpOnly: true,
+    path: '/',
+  },
+  memoryCache: {
+    host: '127.0.0.1',
+    port: 6379,
+  },
   startup: './Startup.js',
   dependencies: './dependencies.js',
 };

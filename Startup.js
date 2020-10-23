@@ -3,9 +3,14 @@
     services.addSingelton('logger', Logger);
     services.addSingelton('router', Router);
     services.addSingelton('controllers', Controllers);
+    services.addTransient('memoryCache', MemoryCache);
+    services.addSingelton('sessionStorage', SessionStorage);
+    services.addSingelton('sessions', Sessions);
+    services.addSingelton('connection', HttpConnection);
+    services.addSingelton('transport', HttpTransport);
   }
 
-  async configure({logger, transport, router, controllers}) {
+  async configure({ logger, transport, router, controllers, sessions }) {
     logger.print('Hello from Startup');
 
     await controllers.start(configuration);
@@ -17,6 +22,13 @@
         handler: async (connection) => {
           connection.sendJson('Hello');
         },
+      })
+      .registerEndpoint({
+        method: 'GET',
+        url: '/redirect',
+        handler: async (connection, appication) => {
+          connection.redirect('/ok');
+        }
       })
       .registerEndpoint({
         method: 'PUT',
