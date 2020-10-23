@@ -11,6 +11,7 @@ const npm = {
   https: require('https'),
   util: require('util'),
   redis: require('redis'),
+  pg: require('pg'),
 };
 
 const nodeApi = {
@@ -29,6 +30,7 @@ const services = {
   HttpConnection: './Framework/Transport/http/HttpConnection.js',
   HttpTransport: './Framework/Transport/http/HttpTransport.js',
   MemoryCache: './Framework/Infrastructure/MemoryCache.js',
+  Database: './Framework/Infrastructure/Database.js',
 };
 
 module.exports = {

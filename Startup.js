@@ -3,6 +3,7 @@
     services.addSingelton('logger', Logger);
     services.addSingelton('router', Router);
     services.addSingelton('controllers', Controllers);
+    services.addSingelton('db', Database);
     services.addTransient('memoryCache', MemoryCache);
     services.addSingelton('sessionStorage', SessionStorage);
     services.addSingelton('sessions', Sessions);
@@ -12,7 +13,6 @@
 
   async configure({ logger, transport, router, controllers, sessions}) {
     logger.print('Hello from Startup');
-
     await controllers.start(configuration);
 
     router
