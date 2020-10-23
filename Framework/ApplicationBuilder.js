@@ -27,12 +27,12 @@ class ApplicationBuilder {
   }
 
   async buildServices() {
-    const {servicesPaths} = this;
+    const {servicesPaths, dependencies, configuration} = this;
     await Promise.all(
       Object.keys(servicesPaths).map(async (serviceName) => {
         const servicePath = servicesPaths[serviceName];
         const src = await fsp.readFile(servicePath);
-        const sandbox = vm.createContext(this.dependencies);
+        const sandbox = vm.createContext({...dependencies, configuration});
         const script = vm.createScript(src);
         const service = script.runInNewContext(sandbox);
         this.services[serviceName] = service;
@@ -52,18 +52,6 @@ class ApplicationBuilder {
     startup.configureServices(container);
     const application = container.build();
     await startup.configure(application);
-  }
-
-  useTransport(ITransport, IConnection) {
-    const {
-      configuration: {transport: config},
-      container,
-    } = this;
-    container.addSingelton('transport', () => {
-      const transport = new ITransport(config, IConnection);
-      return transport;
-    });
-    return this;
   }
 }
 

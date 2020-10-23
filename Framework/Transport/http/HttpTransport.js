@@ -1,24 +1,22 @@
-'use strict';
-
-const http = require('http');
-const https = require('https');
-
 class HttpTransport {
-  constructor(config, ConnectionFactory) {
-    const {ssl, port, ipAddress} = config;
+  constructor(sessions, connection, logger) {
+    const { ssl, port, ipAddress } = configuration.transport;
+    const { http, https } = npm;
     this.port = port;
     this.address = ipAddress;
     this.protocol = ssl ? https : http;
     this.connections = new Map();
-    this.ConnectionFactory = ConnectionFactory;
+    this.sessionManager = sessions;
+    this.Connection = connection;
+    this.logger = logger;
     this.server = this.protocol.createServer(this._listener.bind(this));
     this.handler = async () => {};
   }
 
   async _listener(req, res) {
-    const {connections, handler, ConnectionFactory} = this;
-    const {socket} = res;
-    const connection = new ConnectionFactory(req, res);
+    const { connections, handler, Connection, sessionManager } = this;
+    const { socket } = res;
+    const connection = await new Connection(req, res, sessionManager);
     connections.set(socket, connection);
     await handler(connection);
     res.on('close', () => {
@@ -36,23 +34,26 @@ class HttpTransport {
   }
 
   startListen() {
-    const {port, address, server} = this;
+    const { port, address, server, logger } = this;
     server.listen(port, address, () => {
-      console.dir(`Start server ${address}:${port}`);
+      logger.print(`Start server ${address}:${port}`);
     });
     return this;
   }
 
   async stopListen() {
-    const {connections, server} = this;
+    const { connections, server, logger } = this;
     for (const [socket, connection] of connections.entries()) {
       connection.response.destroy();
       connections.delete(socket);
     }
     server.close(() => {
-      console.dir(`Server closed`);
+      logger.print(`Server closed`);
     });
   }
 }
 
-module.exports = HttpTransport;
+TransportProvider = (sessions, connection, logger) => {
+  const httpTransport = new HttpTransport(sessions, connection, logger);
+  return httpTransport;
+};
