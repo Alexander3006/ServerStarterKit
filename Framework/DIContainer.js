@@ -8,7 +8,7 @@ class DIContainer {
       {},
       {
         get: (target, name) => {
-          if (name === 'services') return target;
+          if (name === 'services') return this.container;
           if (name in target) {
             const service = target[name];
             return this._isFunction(service) ? service() : service;
