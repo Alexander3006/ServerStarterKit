@@ -5,24 +5,25 @@ class RouteService {
   }
 
   async indicatePath(connection) {
-    const {services, storage} = this;
     const {url: urlParser} = npm;
     const {
       request: {url, method},
     } = connection;
+    const {services} = this;
     const {pathname} = urlParser.parse(url);
-    const methodStorage = storage[method.toLowerCase()];
-    if (methodStorage) {
-      const endpoint = methodStorage.get(pathname);
-      if (endpoint) {
-        const {handler} = endpoint;
-        await handler(connection, services);
-      } else {
-        connection.error(404, 'Not Found');
-      }
-    } else {
-      connection.error(404, 'Not Found');
+    const endpoint = this._searchEndpoint(method, pathname);
+    if(!endpoint) {
+      connection.error(404, "Not found");
+      return;
     }
+    await endpoint?.handler(connection, services);
+  }
+
+  _searchEndpoint(method, pathname) {
+    const {storage} = this;
+    const methodStorage = storage[method.toLowerCase()];
+    const endpoint = methodStorage?.get(pathname);
+    return endpoint;
   }
 
   registerEndpoint(options) {
