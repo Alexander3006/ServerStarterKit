@@ -15,7 +15,7 @@ class HttpTransport {
   async _listener(req, res) {
     const { connections, handler, Connection } = this;
     const { socket } = res;
-    const connection = await new Connection(req, res);
+    const connection = new Connection(req, res);
     connections.set(socket, connection);
     await handler(connection);
     res.on('close', () => {
