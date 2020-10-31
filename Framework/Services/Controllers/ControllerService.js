@@ -8,7 +8,7 @@ class ControllerService {
   }
 
   async start() {
-    const {controllers} = configuration;
+    const { controllers } = configuration;
     this.configuration = controllers;
     await this._detectController();
     await this._registerControllers();
@@ -19,18 +19,18 @@ class ControllerService {
 
   _isJsFile(fileName) {
     const {
-      path: {parse},
+      path: { parse },
     } = npm;
-    const {ext} = parse(fileName);
+    const { ext } = parse(fileName);
     return ext === '.js';
   }
 
   async _detectController() {
     const {
-      configuration: {paths},
+      configuration: { paths },
     } = this;
     const {
-      fs: {promises: fsp},
+      fs: { promises: fsp },
       path,
     } = npm;
     const pathsToJSFiles = await Promise.all(
@@ -52,10 +52,10 @@ class ControllerService {
   }
 
   async _wrapController(controllerPath) {
-    const context = {nodeApi, npm};
+    const context = { nodeApi, npm };
     const {
       vm,
-      fs: {promises: fsp},
+      fs: { promises: fsp },
     } = npm;
     const src = await fsp.readFile(controllerPath);
     const sandbox = vm.createContext(context);
@@ -65,7 +65,7 @@ class ControllerService {
   }
 
   async _registerControllers() {
-    const {router, pathsToControllers} = this;
+    const { router, pathsToControllers } = this;
     await Promise.all(
       pathsToControllers.map(async (controllerPath) => {
         const controller = await this._wrapController(controllerPath);
@@ -77,7 +77,7 @@ class ControllerService {
 
   _addSupervisor() {
     const {
-      configuration: {paths},
+      configuration: { paths },
     } = this;
     paths.map((path) => {
       this._watch(path);
@@ -86,7 +86,7 @@ class ControllerService {
   }
 
   stopSupervisor() {
-    const {watchers} = this;
+    const { watchers } = this;
     for (const [_, watcher] of watchers) {
       watcher.close();
     }
@@ -94,9 +94,9 @@ class ControllerService {
   }
 
   _watch(dirPath) {
-    const {fs} = npm;
-    const {setTimeout} = nodeApi;
-    const {router, watchers, _isJsFile, logger} = this;
+    const { fs } = npm;
+    const { setTimeout } = nodeApi;
+    const { router, watchers, _isJsFile, logger } = this;
     let watchWait = false;
     const watcher = fs.watch(dirPath, async (_, fileName) => {
       //try to prevent duplication of events
@@ -111,8 +111,8 @@ class ControllerService {
           if (!_isJsFile(fileName)) return;
           const controller = await this._wrapController(filePath);
           if (!controller) return;
-          const {handler, method, url} = controller;
-          router.deleteController(handler);
+          const { handler, method, url } = controller;
+          router.deleteEndpoint(handler);
           router.registerEndpoint(controller);
           logger.print(
             `The supervisor registered new endpoint: ${method}: ${url}`,

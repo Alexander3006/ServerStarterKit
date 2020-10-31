@@ -1,8 +1,8 @@
 const Database = () => {
   const {
-    pg: {Pool},
+    pg: { Pool },
   } = npm;
-  const {db} = configuration;
+  const { db } = configuration;
   return new Pool(db);
 };
 

@@ -1,7 +1,7 @@
 class MemoryCache {
   constructor(logger) {
-    const {redis} = npm;
-    const {memoryCache} = configuration;
+    const { redis } = npm;
+    const { memoryCache } = configuration;
     this.client = redis.createClient(memoryCache);
     this.client.on('connect', () => {
       logger.print(`Memory cache connected`);
