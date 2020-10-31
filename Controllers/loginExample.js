@@ -1,12 +1,14 @@
-const loginController = async (connection, services) => {
-    const {sessions} = services;
-    const body = JSON.parse(await connection.receiveBody());
-    await sessions.create(connection, body);
-    connection.sendJson('Ok');
-}
+const loginController = async (connection, context) => {
+  const {
+    services: { sessions },
+  } = context;
+  const body = JSON.parse(await connection.receiveBody());
+  await sessions.create(connection, body);
+  connection.sendJson('Ok');
+};
 
 ({
-    method: 'POST',
-    url: '/auth/login',
-    handler: loginController,
-})
+  method: 'POST',
+  url: '/auth/login',
+  handler: loginController,
+});

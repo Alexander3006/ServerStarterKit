@@ -1,8 +1,11 @@
-const testController = async (connection, services) => {
-  const {logger} = services;
+const testController = async (connection, context) => {
+  const {
+    services: { logger },
+    session,
+  } = context;
   logger.print('Test controller');
-  logger.print(connection.session);
-  connection.sendJson(connection.session);
+  logger.print(session);
+  connection.sendJson(session);
 };
 
 ({
