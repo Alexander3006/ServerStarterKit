@@ -1,19 +1,20 @@
 (class Startup {
   configureServices(services) {
     services.addSingelton('logger', Logger);
+    services.addSingelton('Endpoint', Endpoint);
     services.addSingelton('router', Router);
-    services.addSingelton('controllers', Controllers);
+    services.addSingelton('controllerService', ControllerService);
     services.addSingelton('db', Database);
     services.addTransient('memoryCache', MemoryCache);
     services.addSingelton('sessionStorage', SessionStorage);
     services.addSingelton('sessions', Sessions);
-    services.addSingelton('connection', HttpConnection);
+    services.addSingelton('Connection', HttpConnection);
     services.addSingelton('transport', HttpTransport);
   }
 
-  async configure({ logger, transport, router, controllers, sessions}) {
+  async configure({ logger, transport, router, controllerService, sessions }) {
     logger.print('Hello from Startup');
-    await controllers.start(configuration);
+    await controllerService.start(configuration);
 
     router
       .registerEndpoint({
@@ -26,7 +27,7 @@
       .registerEndpoint({
         method: 'GET',
         url: '/redirect',
-        handler: async (connection, appication) => {
+        handler: async (connection) => {
           connection.redirect('/ok');
         }
       })
@@ -43,7 +44,7 @@
     });
     nodeApi.setTimeout(() => {
       transport.stopListen();
-      controllers.stopSupervisor();
+      controllerService.stopSupervisor();
       sessions.stop();
     }, 1000);
     transport.startListen();

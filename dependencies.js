@@ -23,8 +23,9 @@ const nodeApi = {
 
 const services = {
   Logger: './Framework/Services/LoggerService.js',
-  Router: './Framework/Services/RouteService.js',
-  Controllers: './Framework/Services/Controllers/ControllerService.js',
+  Endpoint: './Framework/Services/Router/Endpoint.js',
+  Router: './Framework/Services/Router/RouteService.js',
+  ControllerService: './Framework/Services/Controllers/ControllerService.js',
   Sessions: './Framework/Services/Sessions/SessionService.js',
   SessionStorage: './Framework/Services/Sessions/SessionStorage.js',
   HttpConnection: './Framework/Transport/http/HttpConnection.js',
