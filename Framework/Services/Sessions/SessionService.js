@@ -7,8 +7,8 @@ class Sessions {
   }
 
   async _generateToken() {
-    const {crypto} = npm;
-    const {_tokenLength} = this;
+    const { crypto } = npm;
+    const { _tokenLength } = this;
     const token = await new Promise((res, rej) => {
       crypto.randomBytes(_tokenLength, (err, buf) => {
         err ? rej(err) : res(buf);
@@ -18,8 +18,8 @@ class Sessions {
   }
 
   async create(connection, data) {
-    const {sessionStorage, configuration} = this;
-    const {maxAge, httpOnly, path} = configuration;
+    const { sessionStorage, configuration } = this;
+    const { maxAge, httpOnly, path } = configuration;
     const token = await this._generateToken();
     await sessionStorage.set(token, data);
     connection.setCookie('token', token, {
@@ -31,9 +31,9 @@ class Sessions {
   }
 
   async restore(connection) {
-    const {sessionStorage} = this;
+    const { sessionStorage } = this;
     const cookie = connection.getCookies();
-    const {token} = cookie;
+    const { token } = cookie;
     if (token) {
       const session = await sessionStorage.get(token);
       return session;
@@ -42,8 +42,8 @@ class Sessions {
   }
 
   async delete(connection, token) {
-    const {sessionStorage, cookieConfiguration} = this;
-    const {httpOnly, path} = cookieConfiguration;
+    const { sessionStorage, cookieConfiguration } = this;
+    const { httpOnly, path } = cookieConfiguration;
     await sessionStorage.delete(token);
     connection.setCookie('token', token, {
       maxAge: 0,
@@ -53,9 +53,9 @@ class Sessions {
   }
 
   stop() {
-    const {sessionStorage} = this;
+    const { sessionStorage } = this;
     sessionStorage.stop();
-    return
+    return;
   }
 }
 

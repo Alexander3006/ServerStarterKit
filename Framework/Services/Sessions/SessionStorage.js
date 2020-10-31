@@ -4,7 +4,7 @@ class SessionStorage {
   }
 
   set(token, data) {
-    const {storage} = this;
+    const { storage } = this;
     const json = JSON.stringify(data);
     return new Promise((res, rej) => {
       storage.set(token, json, (err, reply) => {
@@ -14,7 +14,7 @@ class SessionStorage {
   }
 
   async get(token) {
-    const {storage} = this;
+    const { storage } = this;
     const session = await new Promise((res, rej) => {
       storage.get(token, (err, reply) => {
         err ? rej(err) : res(reply);
@@ -24,7 +24,7 @@ class SessionStorage {
   }
 
   delete(token) {
-    const {storage} = this;
+    const { storage } = this;
     return new Promise((res, rej) => {
       storage.del(token, (err, reply) => {
         err ? rej(err) : res(reply);
@@ -33,7 +33,7 @@ class SessionStorage {
   }
 
   stop() {
-    const {storage} = this;
+    const { storage } = this;
     storage.quit();
     return;
   }
