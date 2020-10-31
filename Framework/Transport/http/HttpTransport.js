@@ -1,22 +1,21 @@
 class HttpTransport {
-  constructor(sessions, connection, logger) {
+  constructor(Connection, logger) {
     const { ssl, port, ipAddress } = configuration.transport;
     const { http, https } = npm;
     this.port = port;
     this.address = ipAddress;
     this.protocol = ssl ? https : http;
     this.connections = new Map();
-    this.sessionManager = sessions;
-    this.Connection = connection;
+    this.Connection = Connection;
     this.logger = logger;
     this.server = this.protocol.createServer(this._listener.bind(this));
     this.handler = async () => {};
   }
 
   async _listener(req, res) {
-    const { connections, handler, Connection, sessionManager } = this;
+    const { connections, handler, Connection } = this;
     const { socket } = res;
-    const connection = await new Connection(req, res, sessionManager);
+    const connection = await new Connection(req, res);
     connections.set(socket, connection);
     await handler(connection);
     res.on('close', () => {
@@ -53,7 +52,7 @@ class HttpTransport {
   }
 }
 
-TransportProvider = (sessions, connection, logger) => {
-  const httpTransport = new HttpTransport(sessions, connection, logger);
+TransportProvider = (Connection, logger) => {
+  const httpTransport = new HttpTransport(Connection, logger);
   return httpTransport;
 };

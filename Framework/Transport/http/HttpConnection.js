@@ -1,15 +1,8 @@
 //this class will be supplemented so far it is just a stub
 class HttpConnection {
-  constructor(req, res, sessionManager) {
+  constructor(req, res) {
     this.request = req;
     this.response = res;
-    this.session = null;
-    return this.init(sessionManager);
-  }
-
-  async init(sessionManager) {
-    this.session = await sessionManager.restore(this);
-    return this;
   }
 
   async receiveBody() {
@@ -19,8 +12,7 @@ class HttpConnection {
     for await (const chunk of request) {
       chunks.push(chunk);
     }
-    const buffer = Buffer.concat(chunks)
-      .toString();
+    const buffer = Buffer.concat(chunks).toString();
     return buffer;
   }
 
@@ -37,8 +29,7 @@ class HttpConnection {
     const { request } = this;
     const { cookie } = request.headers;
     if (cookie) {
-      return cookieParser
-        .parse(cookie);
+      return cookieParser.parse(cookie);
     }
     return {};
   }
