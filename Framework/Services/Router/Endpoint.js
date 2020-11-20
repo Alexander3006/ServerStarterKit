@@ -26,4 +26,4 @@ class Endpoint {
   }
 }
 
-EndpointProvider = () => () => Endpoint;
+EndpointProvider = () => Endpoint;
