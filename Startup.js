@@ -1,15 +1,15 @@
 (class Startup {
   configureServices(services) {
-    services.addSingelton('logger', Logger);
-    services.addSingelton('Endpoint', Endpoint);
-    services.addSingelton('router', Router);
-    services.addSingelton('controllerService', ControllerService);
-    services.addSingelton('db', Database);
+    services.addSingleton('logger', Logger);
+    services.addSingleton('Endpoint', Endpoint);
+    services.addSingleton('router', Router);
+    services.addSingleton('controllerService', ControllerService);
+    services.addSingleton('db', Database);
     services.addTransient('memoryCache', MemoryCache);
-    services.addSingelton('sessionStorage', SessionStorage);
-    services.addSingelton('sessions', Sessions);
-    services.addSingelton('Connection', HttpConnection);
-    services.addSingelton('transport', HttpTransport);
+    services.addSingleton('sessionStorage', SessionStorage);
+    services.addSingleton('sessions', Sessions);
+    services.addSingleton('Connection', HttpConnection);
+    services.addSingleton('transport', HttpTransport);
   }
 
   async configure({ logger, transport, router, controllerService, sessions }) {

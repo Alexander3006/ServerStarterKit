@@ -1,6 +1,6 @@
 'use strict';
 
-const DIContainer = require('./DIContainer');
+const DIContainer = require('./DI/DIContainer');
 const vm = require('vm');
 const fsp = require('fs').promises;
 
