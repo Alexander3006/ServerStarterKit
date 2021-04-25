@@ -1,14 +1,14 @@
-const testController = async (connection, context) => {
+const testController = async ({connection}, context) => {
   const {
-    services: { logger },
+    services: {logger},
     session,
   } = context;
-  logger.print('Test controller');
-  logger.print(session);
-  connection.sendJson(session);
+  logger.info('Test controller');
+  logger.info(session);
+  connection.sendJson('ok');
 };
 
-({
+new adapters.HttpEndpoint({
   url: '/test',
   method: 'GET',
   handler: testController,
