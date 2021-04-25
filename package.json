@@ -4,6 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
+    "prettier": "npx prettier --write {,!(node_modules)/**/}*.js",
     "test": "node main.js"
   },
   "repository": {
@@ -30,7 +31,8 @@
     "pg": "^8.4.1",
     "redis": "^3.0.2",
     "util": "^0.12.3",
-    "vm": "^0.1.0"
+    "vm": "^0.1.0",
+    "ws": "^7.4.5"
   },
   "devDependencies": {
     "eslint": "^7.10.0",

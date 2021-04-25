@@ -1,21 +1,26 @@
 'use strict';
 
 const configuration = {
-  transport: {
+  http: {
     ipAddress: '0.0.0.0',
     port: 3000,
     ssl: false,
   },
+  ws: {
+    ipAddress: '0.0.0.0',
+    port: 3001,
+    ssl: false,
+  },
   controllers: {
     paths: ['./Controllers'],
-    supervisor: true,
+    supervisor: false,
   },
-  sessions: {
+  httpCookies: {
     maxAge: 30000,
     httpOnly: true,
     path: '/',
   },
-  memoryCache: {
+  redis: {
     host: '127.0.0.1',
     port: 6379,
   },
