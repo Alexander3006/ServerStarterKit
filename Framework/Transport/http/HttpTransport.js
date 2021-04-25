@@ -1,58 +1,60 @@
-class HttpTransport {
-  constructor(Connection, logger) {
-    const { ssl, port, ipAddress } = configuration.transport;
-    const { http, https } = npm;
+'use strict';
+
+const BaseTransport = require('../BaseTransport');
+const Connection = require('./HttpConnection');
+const {readFileSync} = require('fs');
+
+class HttpTransport extends BaseTransport {
+  constructor(services, configuration) {
+    super(services);
+    const {ssl, port, ipAddress} = configuration;
     this.port = port;
     this.address = ipAddress;
-    this.protocol = ssl ? https : http;
+    const protocol = ssl ? require('https') : require('http');
+    const {cert, key} = ssl;
     this.connections = new Map();
-    this.Connection = Connection;
-    this.logger = logger;
-    this.server = this.protocol.createServer(this._listener.bind(this));
-    this.handler = async () => {};
+    this.server = protocol.createServer(
+      ssl
+        ? {
+            key: readFileSync(key),
+            cert: readFileSync(cert),
+          }
+        : {},
+      this._listener.bind(this),
+    );
   }
 
   async _listener(req, res) {
-    const { connections, handler, Connection } = this;
-    const { socket } = res;
-    const connection = new Connection(req, res);
+    const {connections, handler, services} = this;
+    const {socket} = res;
+    const connection = new Connection(services, req, res);
     connections.set(socket, connection);
-    await handler(connection);
+    const path = connection.getEndpointPath();
+    await handler({connection, path});
     res.on('close', () => {
       connections.delete(socket);
     });
   }
 
-  setHandler(handler) {
-    if (typeof handler === 'function') {
-      this.handler = handler;
-    } else {
-      throw new Error('The handler must be a function');
-    }
-    return this;
-  }
-
   startListen() {
-    const { port, address, server, logger } = this;
+    const {port, address, server, logger, ssl} = this;
     server.listen(port, address, () => {
-      logger.print(`Start server ${address}:${port}`);
+      logger.info(`Start server ${ssl ? 'https' : 'http'}://${address}:${port}`);
     });
     return this;
   }
 
-  async stopListen() {
-    const { connections, server, logger } = this;
+  stopListen() {
+    const {connections, server, logger} = this;
     for (const [socket, connection] of connections.entries()) {
-      connection.response.destroy();
+      connection.destroy();
       connections.delete(socket);
     }
     server.close(() => {
-      logger.print(`Server closed`);
+      logger.info(`Http(s) server closed`);
     });
+    return this;
   }
 }
 
-TransportProvider = (Connection, logger) => {
-  const httpTransport = new HttpTransport(Connection, logger);
-  return httpTransport;
-};
+module.exports = HttpTransport;
