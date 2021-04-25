@@ -1,14 +1,23 @@
+'use strict';
+
+const vm = require('vm');
+const fsp = require('fs/promises');
+const fs = require('fs');
+const path = require('path');
+
+const dependencies = require('../../../dependencies');
+
 class ControllerService {
-  constructor(router, logger) {
+  constructor(router, logger, Endpoint) {
     this.configuration;
-    this.logger = logger;
     this.router = router;
+    this.logger = logger;
+    this.Endpoint = Endpoint;
     this.watchers = new Map();
     this.pathsToControllers = [];
   }
 
-  async start() {
-    const {controllers} = configuration;
+  async start(controllers) {
     this.configuration = controllers;
     await this._detectController();
     await this._registerControllers();
@@ -18,10 +27,7 @@ class ControllerService {
   }
 
   _isJsFile(fileName) {
-    const {
-      path: {parse},
-    } = npm;
-    const {ext} = parse(fileName);
+    const {ext} = path.parse(fileName);
     return ext === '.js';
   }
 
@@ -29,10 +35,6 @@ class ControllerService {
     const {
       configuration: {paths},
     } = this;
-    const {
-      fs: {promises: fsp},
-      path,
-    } = npm;
     const pathsToJSFiles = await Promise.all(
       paths.map(async (dirPath) => {
         const files = await fsp.readdir(dirPath);
@@ -52,24 +54,21 @@ class ControllerService {
   }
 
   async _wrapController(controllerPath) {
-    const context = {nodeApi, npm};
-    const {
-      vm,
-      fs: {promises: fsp},
-    } = npm;
+    const {nodeApi, node_modules, adapters} = dependencies;
     const src = await fsp.readFile(controllerPath);
-    const sandbox = vm.createContext(context);
+    const sandbox = vm.createContext({nodeApi, node_modules, adapters});
     const script = vm.createScript(src);
     const controller = script.runInNewContext(sandbox);
     return controller;
   }
 
   async _registerControllers() {
-    const {router, pathsToControllers} = this;
+    const {router, pathsToControllers, Endpoint} = this;
     await Promise.all(
       pathsToControllers.map(async (controllerPath) => {
         const controller = await this._wrapController(controllerPath);
-        router.registerEndpoint(controller);
+        const endpoint = new Endpoint(controller);
+        router.registerEndpoint(endpoint);
       }),
     );
     return this;
@@ -94,8 +93,6 @@ class ControllerService {
   }
 
   _watch(dirPath) {
-    const {fs} = npm;
-    const {setTimeout} = nodeApi;
     const {router, watchers, _isJsFile, logger} = this;
     let watchWait = false;
     const watcher = fs.watch(dirPath, async (_, fileName) => {
@@ -104,7 +101,7 @@ class ControllerService {
       watchWait = setTimeout(() => {
         watchWait = false;
       }, 100);
-      const filePath = npm.path.join(dirPath, fileName);
+      const filePath = path.join(dirPath, fileName);
       try {
         const stat = await fs.promises.stat(filePath);
         if (stat.isFile()) {
@@ -113,13 +110,12 @@ class ControllerService {
           if (!controller) return;
           const {handler, method, url} = controller;
           router.deleteEndpoint(handler);
-          router.registerEndpoint(controller);
-          logger.print(
-            `The supervisor registered new endpoint: ${method}: ${url}`,
-          );
+          const endpoint = new this.Endpoint(controller);
+          router.registerEndpoint(endpoint);
+          logger.info(`The supervisor registered new endpoint: ${method}: ${url}`);
         }
       } catch (err) {
-        logger.print(err);
+        logger.error(err);
         return;
       }
     });
@@ -128,7 +124,4 @@ class ControllerService {
   }
 }
 
-ControllerServiceProvider = (router, logger) => {
-  const controllerService = new ControllerService(router, logger);
-  return controllerService;
-};
+module.exports = ControllerService;
