@@ -1,23 +1,21 @@
 class RouteService {
-  constructor(Endpoint, services) {
-    this.Endpoint = Endpoint;
+  constructor(services) {
     this.services = services;
     this.storage = {};
   }
 
-  async indicatePath(connection) {
-    const {url: urlParser} = npm;
+  indicatePath(request) {
     const {
-      request: {url, method},
-    } = connection;
+      path: {pathname, method},
+      connection,
+    } = request;
     const {services} = this;
-    const {pathname} = urlParser.parse(url);
     const endpoint = this._searchEndpoint(method, pathname);
     if (!endpoint) {
-      connection.error(404, 'Not found');
+      connection.error(404, `Edpdoint: ${method}:${pathname} not found`);
       return;
     }
-    await endpoint?.execute(connection, services);
+    endpoint.execute(request, services);
   }
 
   _searchEndpoint(method, pathname) {
@@ -27,18 +25,13 @@ class RouteService {
     return endpoint;
   }
 
-  registerEndpoint(options) {
-    const {method, url} = options;
-    const {storage, Endpoint} = this;
-    const normilizedMetod = method.toLowerCase();
-    const methodStorage = storage[normilizedMetod];
-    const endpoint = new Endpoint(options);
-    if (methodStorage) {
-      methodStorage.set(url, endpoint);
-    } else {
-      const methodStorage = (storage[normilizedMetod] = new Map());
-      methodStorage.set(url, endpoint);
-    }
+  registerEndpoint(endpoint) {
+    const {storage} = this;
+    const url = endpoint.getUrl();
+    const method = endpoint.getMethod();
+    const methodStorage = storage[method] ?? new Map();
+    methodStorage.set(url, endpoint);
+    storage[method] = methodStorage;
     return this;
   }
 
@@ -56,14 +49,12 @@ class RouteService {
     const {storage, _findHandlerInStorage} = this;
     Object.values(storage).map((methodStorage) => {
       const url = _findHandlerInStorage(methodStorage, handler);
-      if (url) {
-        methodStorage.delete(url);
-      }
+      if (url) methodStorage.delete(url);
     });
   }
 }
 
-RouteServiceProvider = (Endpoint, services) => {
-  const router = new RouteService(Endpoint, services);
+RouteServiceProvider = (services) => {
+  const router = new RouteService(services);
   return router;
 };
