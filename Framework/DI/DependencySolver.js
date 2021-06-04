@@ -19,7 +19,7 @@ module.exports = class DependencySolver {
     return children.map((child) => {
       const childNode = heap.find((node) => node.name === child);
       if (!childNode) {
-        throw new Error(`node "${child}" does not exist`);
+        throw new Error(`node "${child.toString()}" does not exist`);
       }
       return childNode;
     });
