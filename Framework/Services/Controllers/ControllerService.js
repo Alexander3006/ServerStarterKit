@@ -54,9 +54,9 @@ class ControllerService {
   }
 
   async _wrapController(controllerPath) {
-    const {nodeApi, node_modules, adapters} = dependencies;
+    const {nodeApi, node_modules, adapters, interfaces} = dependencies;
     const src = await fsp.readFile(controllerPath);
-    const sandbox = vm.createContext({nodeApi, node_modules, adapters});
+    const sandbox = vm.createContext({nodeApi, node_modules, adapters, interfaces});
     const script = vm.createScript(src);
     const controller = script.runInNewContext(sandbox);
     return controller;

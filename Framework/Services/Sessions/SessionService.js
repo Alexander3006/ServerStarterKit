@@ -1,3 +1,5 @@
+const {ISessionStorage} = interfaces;
+
 class Sessions {
   constructor(sessionStorage) {
     const TOKEN_LEN = 256 / 8;
@@ -36,7 +38,10 @@ class Sessions {
   }
 }
 
-SessionsProvider = (sessionStorage) => {
-  const sessions = new Sessions(sessionStorage);
-  return sessions;
-};
+({
+  imports: [ISessionStorage],
+  factory: ({[ISessionStorage]: sessionStorage}) => {
+    const sessions = new Sessions(sessionStorage);
+    return sessions;
+  },
+});

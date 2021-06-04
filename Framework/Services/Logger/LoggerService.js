@@ -20,7 +20,10 @@ class Logger extends ports.BaseLoggerService {
   }
 }
 
-LoggerProvider = () => {
-  const logger = new Logger();
-  return logger;
-};
+({
+  imports: [],
+  factory: () => {
+    const logger = new Logger();
+    return logger;
+  },
+});

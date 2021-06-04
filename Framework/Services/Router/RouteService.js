@@ -1,20 +1,19 @@
+const {SERVICES} = interfaces;
+
 class RouteService {
   constructor(services) {
     this.services = services;
     this.storage = {};
   }
 
-  indicatePath(request) {
-    const {
-      path: {pathname, method},
-      connection,
-    } = request;
+  indicatePath(method, pathname, connection, data = {}) {
     const {services} = this;
     const endpoint = this._searchEndpoint(method, pathname);
     if (!endpoint) {
       connection.error(404, `Edpdoint: ${method}:${pathname} not found`);
       return;
     }
+    const request = {method, pathname, connection, data};
     endpoint.execute(request, services);
   }
 
@@ -54,7 +53,10 @@ class RouteService {
   }
 }
 
-RouteServiceProvider = (services) => {
-  const router = new RouteService(services);
-  return router;
-};
+({
+  imports: [SERVICES],
+  factory: ({[SERVICES]: services}) => {
+    const router = new RouteService(services);
+    return router;
+  },
+});

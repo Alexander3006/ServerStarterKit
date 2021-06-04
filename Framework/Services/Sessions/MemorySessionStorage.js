@@ -22,7 +22,10 @@ class MemmorySessionStorage extends ports.BaseSessionStorage {
   }
 }
 
-MemmorySessionStorageProvider = () => {
-  const sessionStorage = new MemmorySessionStorage();
-  return sessionStorage;
-};
+({
+  imports: [],
+  factory: () => {
+    const sessionStorage = new MemmorySessionStorage();
+    return sessionStorage;
+  },
+});

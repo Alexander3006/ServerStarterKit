@@ -1,3 +1,5 @@
+const {Redis} = interfaces;
+
 class RedisSessionStorage extends ports.BaseSessionStorage {
   constructor(redis) {
     super();
@@ -40,7 +42,10 @@ class RedisSessionStorage extends ports.BaseSessionStorage {
   }
 }
 
-SessionStorageProvider = (redis) => {
-  const sessionStorage = new RedisSessionStorage(redis);
-  return sessionStorage;
-};
+({
+  imports: [Redis],
+  factory: ({[Redis]: redis}) => {
+    const sessionStorage = new RedisSessionStorage(redis);
+    return sessionStorage;
+  },
+});
