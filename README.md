@@ -6,7 +6,7 @@
 # ServerStarterKit
 
 ## Framework for Node.JS, which has the following functionality:
-- IoC Container
+- IoC Container (singleton/transient(ready), scoped(in developing))
 - Router
 - Basic transport(HTTP\WS) with the ability to connect custom adapters
 - Controller service, that can automatically load controllers and monitor them
