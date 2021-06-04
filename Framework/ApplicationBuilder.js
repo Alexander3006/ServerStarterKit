@@ -22,15 +22,15 @@ class ApplicationBuilder {
   }
 
   setDependencies(dependencies) {
-    const {node_modules, nodeApi, services, adapters, ports, routers} = dependencies;
+    const {node_modules, nodeApi, services, adapters, ports, interfaces} = dependencies;
     this.dependencies = Object.freeze({
       node_modules,
       nodeApi,
       adapters,
-      routers,
       ports,
+      interfaces,
     });
-    this.servicesPaths = {...services, ...routers};
+    this.servicesPaths = services;
     return this;
   }
 
@@ -57,10 +57,6 @@ class ApplicationBuilder {
     const Startup = script.runInNewContext(sandbox);
     this.startup = new Startup();
     const {startup, container} = this;
-    const {routers} = dependencies;
-    Object.keys(routers).map((routerName) => {
-      container.addSingleton(routerName, services[routerName]);
-    });
     startup.configureServices(container);
     const application = container.build();
     this.application = application;
@@ -70,16 +66,15 @@ class ApplicationBuilder {
 
   useTransport(Transport, Endpoint, configuration) {
     const {application} = this;
-    const {logger} = application;
+    const {[configuration.logger]: logger, [configuration.router]: router} = application;
     const transport = new Transport(application, configuration.transport);
-    const router = application[configuration.router];
     const {controllers} = configuration;
     if (controllers) {
       const controllerService = new ControllerService(router, logger, Endpoint);
       controllerService.start(controllers);
     }
-    transport.setHandler(async (request) => {
-      await router.indicatePath(request);
+    transport.setHandler(async (method, pathname, connection, data) => {
+      await router.indicatePath(method, pathname, connection, data);
     });
     return transport;
   }
