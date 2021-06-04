@@ -6,7 +6,10 @@ const Database = () => {
   return new Pool(db);
 };
 
-DatabaseProvider = () => {
-  const db = Database();
-  return db;
-};
+({
+  imports: [],
+  factory: () => {
+    const db = Database();
+    return db;
+  },
+});

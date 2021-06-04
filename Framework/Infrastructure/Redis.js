@@ -1,3 +1,5 @@
+const {ILogger} = interfaces;
+
 class Redis {
   constructor(logger) {
     const {redis} = node_modules;
@@ -12,7 +14,10 @@ class Redis {
   }
 }
 
-RedisProvider = (logger) => {
-  const redis = new Redis(logger);
-  return redis;
-};
+({
+  imports: [ILogger],
+  factory: ({[ILogger]: logger}) => {
+    const redis = new Redis(logger);
+    return redis;
+  },
+});
