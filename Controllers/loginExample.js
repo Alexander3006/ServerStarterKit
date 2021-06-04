@@ -1,6 +1,6 @@
 const loginController = async ({connection}, context) => {
   const {
-    services: {sessions},
+    services: {[interfaces.ISessionService]: sessions},
   } = context;
   const body = JSON.parse(await connection.receiveBody());
   await sessions.create(connection, body);

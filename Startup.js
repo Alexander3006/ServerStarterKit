@@ -1,14 +1,17 @@
+const {ILogger, ISessionService, ISessionStorage, IRouter} = interfaces;
+const {HttpEndpoint, WSEndpoint} = adapters;
+
 (class Startup {
   configureServices(services) {
-    services.addSingleton('logger', Logger);
+    services.addSingleton(ILogger, Logger);
     // services.addSingleton('db', Database);
-    services.addSingleton('sessionStorage', MemorySessionStorage);
-    services.addSingleton('sessions', Sessions);
+    services.addSingleton(ISessionStorage, MemorySessionStorage);
+    services.addSingleton(ISessionService, Sessions);
+    services.addSingleton(IRouter, Router);
   }
 
-  async configure({logger, router}) {
+  async configure({[ILogger]: logger, [IRouter]: router}) {
     logger.info('Hello from Startup');
-    const {HttpEndpoint, WSEndpoint} = adapters;
     router
       .registerEndpoint(
         new HttpEndpoint({

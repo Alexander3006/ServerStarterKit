@@ -1,6 +1,6 @@
 const testController = async ({connection}, context) => {
   const {
-    services: {logger},
+    services: {[interfaces.ILogger]: logger},
     session,
   } = context;
   logger.info('Test controller');

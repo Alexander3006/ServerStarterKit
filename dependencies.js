@@ -13,6 +13,16 @@ const node_modules = {
   pg: require('pg'),
 };
 
+const interfaces = {
+  SERVICES: require('./Framework/DI/constants').SERVICES,
+  IRouter: require('./Framework/Services/Router/IRouter'),
+  ILogger: require('./Framework/Services/Logger/ILogger'),
+  ISessionService: require('./Framework/Services/Sessions/ISessionService'),
+  ISessionStorage: require('./Framework/Services/Sessions/ISessionStorage'),
+  Redis: Symbol('Redis'),
+  Database: Symbol('Database'),
+};
+
 const ports = {
   BaseSessionStorage: require('./Framework/Services/Sessions/BaseSessionStorage'),
   BaseLoggerService: require('./Framework/Services/Logger/BaseLoggerService'),
@@ -39,10 +49,7 @@ const services = {
   RedisSessionStorage: './Framework/Services/Sessions/RedisSessionStorage.js',
   Redis: './Framework/Infrastructure/Redis.js',
   Database: './Framework/Infrastructure/Database.js',
-};
-
-const routers = {
-  router: './Framework/Services/Router/RouteService.js',
+  Router: './Framework/Services/Router/RouteService.js',
 };
 
 module.exports = {
@@ -51,5 +58,5 @@ module.exports = {
   services,
   adapters,
   ports,
-  routers,
+  interfaces,
 };
