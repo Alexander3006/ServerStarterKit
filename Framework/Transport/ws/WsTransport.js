@@ -43,11 +43,7 @@ class WsTransport extends BaseTransport {
     socket.on('message', async (message) => {
       const payload = JSON.parse(message);
       const {event, data} = payload;
-      const path = {
-        method: 'WS',
-        pathname: event,
-      };
-      await handler({connection, path, data});
+      await handler(event, 'WS', connection, data);
     });
   }
 

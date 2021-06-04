@@ -13,7 +13,6 @@ class WsConnection extends BaseConnection {
     const {
       request: {url, headers},
     } = this;
-    console.dir(this.request);
     const token = new URL(url, `ws://${headers.host}`).searchParams.get('token');
     return token;
   }

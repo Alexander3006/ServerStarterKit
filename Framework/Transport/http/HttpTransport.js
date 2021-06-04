@@ -29,8 +29,8 @@ class HttpTransport extends BaseTransport {
     const {socket} = res;
     const connection = new Connection(services, req, res);
     connections.set(socket, connection);
-    const path = connection.getEndpointPath();
-    await handler({connection, path});
+    const {pathname, method} = connection.getEndpointPath();
+    await handler(pathname, method, connection);
     res.on('close', () => {
       connections.delete(socket);
     });

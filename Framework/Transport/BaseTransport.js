@@ -1,9 +1,11 @@
 'use strict';
 
+const ILogger = require('../Services/Logger/ILogger');
+
 class BaseTransport {
   constructor(services) {
     this.services = services;
-    this.logger = services.logger ?? {};
+    this.logger = services[ILogger] ?? {};
     this.handler = async () => {};
   }
 

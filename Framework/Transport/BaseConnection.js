@@ -1,5 +1,7 @@
 'use strict';
 
+const ISessionService = require('../Services/Sessions/ISessionService');
+
 class BaseConnection {
   constructor(services) {
     this.services = services;
@@ -23,7 +25,7 @@ class BaseConnection {
 
   async _restoreSession() {
     const {
-      services: {sessions},
+      services: {[ISessionService]: sessions},
     } = this;
     if (!sessions) return;
     const token = this.getSessionToken();
@@ -35,7 +37,7 @@ class BaseConnection {
 
   async createSession(data) {
     const {
-      services: {sessions},
+      services: {[ISessionService]: sessions},
     } = this;
     if (!sessions) return;
     const token = await sessions.create(data);
@@ -46,7 +48,7 @@ class BaseConnection {
 
   async deleteSession(token) {
     const {
-      services: {sessions},
+      services: {[ISessionService]: sessions},
     } = this;
     if (!sessions) return;
     await sessions.delete(token);
